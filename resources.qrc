@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/plugins/correct_of_DEM" >
+        <file>icon.png</file>
+    </qresource>
+</RCC>
