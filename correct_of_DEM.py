@@ -32,6 +32,8 @@ from .resources import *
 from .correct_of_DEM_dialog import CorrectingOfDEMDialog
 import os.path
 
+import processing
+
 
 class CorrectingOfDEM:
     """QGIS Plugin Implementation."""
@@ -185,6 +187,39 @@ class CorrectingOfDEM:
     
     def run(self):
         """Run method that performs all the real work"""
+        
+        def get_source():
+            """Load of input data"""
+            
+            for layer in layers:
+                if (self.dlg.cbox_dem_nodata.currentText() == layer.name()):
+                    dem_nodata = layer
+                elif (self.dlg.cbox_dem_health.currentText() == layer.name()):
+                    dem_health = layer
+                elif (self.dlg.cbox_nodata_shape.currentText() == layer.name()):
+                    shape_nodata = layer
+            return dem_nodata, dem_health, shape_nodata
+
+        def correct_of_hole(feature):    
+            """Fill the current hole"""
+            # Создание отдельного слоя 'дырки'
+            hole = QgsVectorLayer("Polygon","cur_h",provider.name())
+            pr = hole.dataProvider()
+            pr.addAttributes([QgsField("Parts", QVariant.Int),
+                              QgsField("Length", QVariant.Double),
+                              QgsField("Area", QVariant.Double),
+                              QgsField("Type", QVariant.Int)])
+            pr.addFeature(feature)
+            
+            # Извлечение буфера
+            buffer = processing.run("qgis:singlesidedbuffer", {'INPUT': hole,
+            'DISTANCE': 1.5,
+            'SIDE': 0,
+            'SEGMENTS': 10,
+            'JOIN_STYLE': 0,
+            'MITER_LIMIT': 2.0,
+            'OUTPUT': 'memory'})
+            
 
         self.dlg.cbox_dem_nodata.clear()
         self.dlg.cbox_dem_health.clear()
@@ -210,35 +245,21 @@ class CorrectingOfDEM:
         # See if OK was pressed
         if result:
             if self.dlg.cbox_dem_nodata.currentIndex()==0 or self.dlg.cbox_dem_health.currentIndex()==0 or self.dlg.cbox_nodata_shape.currentIndex()==0:
-                # вывести ошибку так как все поля должны быть не пустыми
+                #TODO вывести ошибку так как все поля должны быть не пустыми
                 pass
             # получение данных
-            for layer in layers:
-                if (self.dlg.cbox_dem_nodata.currentText() == layer.name()):
-                    dem_nodata = layer
-                elif (self.dlg.cbox_dem_health.currentText() == layer.name()):
-                    dem_health = layer
-                elif (self.dlg.cbox_nodata_shape.currentText() == layer.name()):
-                    shape_nodata = layer
-
-            higths = dem_nodata.constDataProvider().identify(QgsPointXY(-593779.9,2956635.4),1).results()
-            provider = shape_nodata.dataProvider()
-            feat = QgsFeature()
-            iterator = provider.getFeatures()
-            print(shape_nodata.LayerConfiguration)
-#            while iterator.nextFeature(feat):
-#                current_hole = QgsVectorLayer("Polygon","cur_h","memory")
-#                pr = current_hole.dataProvider()
-#                pr.addAttributes([QgsField("Parts", QVariant.String),
-#                                  QgsField("Length", QVariant.Double),
-#                                  QgsField("Area", QVariant.Double),
-#                                  QgsField("Type", QVariant.Int)])
-#                pr.addFeature(feat)
-                
-
+            dem_nodata, dem_health, shape_nodata = get_source()
             
-#            allAttrs = provider.attributeIndexes()
-#            print(allAttrs)
+            # Лечение
+            #????
+            
+            #higths = dem_nodata.constDataProvider().identify(QgsPointXY(-593779.9,2956635.4),1).results()
+            provider = shape_nodata.dataProvider()
+            feature = QgsFeature()
+            iterator = provider.getFeatures()
+            while iterator.nextFeature(feature):
+                correct_of_hole(feature)
+
 
 
 
