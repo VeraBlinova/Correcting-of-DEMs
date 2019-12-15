@@ -1,0 +1,18 @@
+ENVI
+description = {
+  Create New File Result [Mon Oct 15 14:38:13 2018]}
+samples = 1000
+lines   = 1000
+bands   = 1
+header offset = 0
+file type = ENVI Standard
+data type = 4
+interleave = bsq
+sensor type = Unknown
+byte order = 0
+x start = 10253
+y start = 39584
+map info = {Polar Stereographic, 1.0000, 1.0000, -594900.0000, 2957638.0000, 2.0000000000e+000, 2.0000000000e+000, WGS-84, units=Meters}
+projection info = {31, 6378137.0, 6356752.3, 70.000000, -45.000000, 0.0, 0.0, WGS-84, Polar Stereographic, units=Meters}
+coordinate system string = {PROJCS["Polar Stereographic",GEOGCS["GCS_WGS_1984",DATUM["D_WGS_1984",SPHEROID["WGS_1984",6378137.0,298.257223563]],PRIMEM["Greenwich",0.0],UNIT["Degree",0.0174532925199433]],PROJECTION["Stereographic_North_Pole"],PARAMETER["False_Easting",0.0],PARAMETER["False_Northing",0.0],PARAMETER["Central_Meridian",-45.0],PARAMETER["Standard_Parallel_1",70.0],UNIT["Meter",1.0]]}
+wavelength units = Unknown
